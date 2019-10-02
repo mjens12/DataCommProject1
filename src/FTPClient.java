@@ -69,13 +69,13 @@ class FTPClient {
 							"\nWhat would you like to do next: \n retr: file.txt || stor: file.txt  || quit: close");
 
 				} else if (sentence.startsWith("retr: ")) {
-					// Isfar
+					// Max
 					// ....................................................
 				} else if (sentence.startsWith("stor: ")) {
 					// Rob
 					// ....................................................
 				} else if (sentence.startsWith("quit")) {
-					// Sean
+					// Rob
 					// ....................................................
 				}
 			}
