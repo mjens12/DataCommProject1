@@ -17,6 +17,8 @@ class FTPClient {
 		boolean notEnd = true;
 		String statusCode;
 		boolean clientgo = true;
+		int port1 = 0;
+		int port = 0;
 
 		BufferedReader inFromUser =
 				new BufferedReader(new InputStreamReader(System.in));
@@ -64,9 +66,13 @@ class FTPClient {
 					welcomeData.close();
 					dataSocket.close();
 					System.out.println(
-							"\nWhat would you like to do next: \n retr: file.txt ||stor: file.txt  || close");
+							"\nWhat would you like to do next: \n retr: file.txt || stor: file.txt  || quit: close");
 
 				} else if (sentence.startsWith("retr: ")) {
+					// ....................................................
+				} else if (sentence.startsWith("stor: ")) {
+					// ....................................................
+				} else if (sentence.startsWith("quit")) {
 					// ....................................................
 				}
 			}
