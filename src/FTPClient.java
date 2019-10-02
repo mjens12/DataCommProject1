@@ -59,8 +59,10 @@ class FTPClient {
 									dataSocket.getInputStream()));
 					while (notEnd) {
 						modifiedSentence = inData.readUTF();
+						System.out.println(
+								"The list of files on the server is:");
+						System.out.println(modifiedSentence);
 						// Max ........................................
-						// ........................................
 					}
 
 					welcomeData.close();
