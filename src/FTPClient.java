@@ -59,7 +59,7 @@ class FTPClient {
 									dataSocket.getInputStream()));
 					while (notEnd) {
 						modifiedSentence = inData.readUTF();
-						// ........................................
+						// Max ........................................
 						// ........................................
 					}
 
@@ -69,10 +69,13 @@ class FTPClient {
 							"\nWhat would you like to do next: \n retr: file.txt || stor: file.txt  || quit: close");
 
 				} else if (sentence.startsWith("retr: ")) {
+					// Isfar
 					// ....................................................
 				} else if (sentence.startsWith("stor: ")) {
+					// Rob
 					// ....................................................
 				} else if (sentence.startsWith("quit")) {
+					// Sean
 					// ....................................................
 				}
 			}
