@@ -69,6 +69,10 @@ class ClientHandler extends Thread {
 
             serverFiles(directory, listOfFiles);
 
+            if (clientCommand.equals("list:")) {
+            	//Max
+            }
+            
             if (clientCommand.equals("retr")) {
 
                 Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
@@ -95,6 +99,12 @@ class ClientHandler extends Thread {
 
                 dataSocket.close();
                 System.out.println("Data Socket closed");
+            }
+            if (clientCommand.equals("stor:")) {
+            	//Sean
+            }
+            if (clientCommand.equals("quit")) {
+            	//Sean
             }
 
         }
