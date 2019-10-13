@@ -95,7 +95,8 @@ class FTPClient {
         bos.write(byteArray, 0, current);
         bos.flush();
         bos.close();
-
+     
+     System.out.println("\nFile Retrieved");
      welcomeData.close();
 	 dataSocket.close();
 	 System.out.println("\nWhat would you like to do next: \n retr: file.txt ||stor: file.txt  || close");
