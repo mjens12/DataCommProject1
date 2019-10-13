@@ -45,6 +45,7 @@ class FTPClient {
 				sentence = inFromUser.readLine();
 
 				if (sentence.equals("list:")) {
+					//Max
 					
 					port = port + 2;
 					outToServer.writeBytes(
@@ -58,7 +59,7 @@ class FTPClient {
 									dataSocket.getInputStream()));
 					while (notEnd) {
 						modifiedSentence = inData.readUTF();
-						// Max ......................
+						System.out.println(modifiedSentence);
 					}
 
 					welcomeData.close();
