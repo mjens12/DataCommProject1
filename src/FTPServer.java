@@ -54,6 +54,7 @@ class ClientHandler extends Thread {
             if (file.isFile()) {
                 listOfFiles.add(file.getName());
             }
+            
         }
     }
 
