@@ -1,86 +1,116 @@
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.StringTokenizer;
+import java.io.*; 
+import java.net.*;
+import java.util.*;
+import java.text.*;
+import java.lang.*;
+import javax.swing.*;
 
-class FTPClient {
+class FTPClient { 
 
-	public static void main(String argv[]) throws Exception {
-		String sentence;
-		String modifiedSentence;
-		boolean isOpen = true;
-		int number = 1;
-		boolean notEnd = true;
+    public static void main(String argv[]) throws Exception 
+    { 
+        String sentence; 
+        String modifiedSentence; 
+        boolean isOpen = true;
+        int number = 1;
+        boolean notEnd = true;
 		String statusCode;
 		boolean clientgo = true;
-		int port1 = 0;
-		int port = 0;
 
-		BufferedReader inFromUser =
-				new BufferedReader(new InputStreamReader(System.in));
-		sentence = inFromUser.readLine();
-		StringTokenizer tokens = new StringTokenizer(sentence);
+		int port = 12000;
+	    
+	
+		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in)); 
+        sentence = inFromUser.readLine();
+        StringTokenizer tokens = new StringTokenizer(sentence);
 
-		if (sentence.startsWith("connect")) {
-			String serverName = tokens.nextToken(); // pass the connect
-													// command
-			serverName = tokens.nextToken();
-			port1 = Integer.parseInt(tokens.nextToken());
-			System.out.println("You are connected to " + serverName);
 
-			Socket ControlSocket = new Socket(serverName, port1);
+		if(sentence.startsWith("connect")){
+		String serverName = tokens.nextToken(); // pass the connect command
+		serverName = tokens.nextToken();
+		int port1 = Integer.parseInt(tokens.nextToken());
+        System.out.println("You are connected to " + serverName);
+        
+	Socket ControlSocket = new Socket(serverName, port1);
 
-			while (isOpen && clientgo) {
+    System.out.println("You are connected");
+        
+	while(isOpen && clientgo)
+        {      
+	      
+      DataOutputStream outToServer = new DataOutputStream(ControlSocket.getOutputStream());  
+	  DataInputStream inFromServer = new DataInputStream(new BufferedInputStream (ControlSocket.getInputStream()));
+          
+    	sentence = inFromUser.readLine();
+	   
+        if(sentence.equals("list:"))
+        {
+            
+	    port = port +2;
+	    outToServer.writeBytes (port + " " + sentence + " " + '\n');
+	    
+        ServerSocket welcomeData = new ServerSocket(port);
+	    Socket dataSocket = welcomeData.accept(); 
 
-				DataOutputStream outToServer = new DataOutputStream(
-						ControlSocket.getOutputStream());
+ 	    DataInputStream inData = new DataInputStream(new BufferedInputStream (dataSocket.getInputStream()));
+            while(notEnd) 
+            {
+                modifiedSentence = inData.readUTF();
+               //........................................
+	       //........................................
+            }
+	
 
-				DataInputStream inFromServer =
-						new DataInputStream(new BufferedInputStream(
-								ControlSocket.getInputStream()));
+	 welcomeData.close();
+	 dataSocket.close();
+	 System.out.println("\nWhat would you like to do next: \n retr: file.txt ||stor: file.txt  || close");
 
-				sentence = inFromUser.readLine();
+        }
+         else if(sentence.startsWith("retr: "))
+        {
 
-				if (sentence.equals("list:")) {
+        int bytesRead;
+        int current = 0;
+        byte[] byteArray = new byte[10];
 
-					port = port + 2;
-					outToServer.writeBytes(
-							port + " " + sentence + " " + '\n');
+	    outToServer.writeBytes (port + " " + sentence + " " + '\n');
+	    
+        ServerSocket welcomeData = new ServerSocket(port);
+	    Socket dataSocket = welcomeData.accept(); 
 
-					ServerSocket welcomeData = new ServerSocket(port);
-					Socket dataSocket = welcomeData.accept();
+ 	    DataInputStream inData = new DataInputStream(new BufferedInputStream (dataSocket.getInputStream()));
 
-					DataInputStream inData = new DataInputStream(
-							new BufferedInputStream(
-									dataSocket.getInputStream()));
-					while (notEnd) {
-						modifiedSentence = inData.readUTF();
-						System.out.println(
-								"The list of files on the server is:");
-						System.out.println(modifiedSentence);
-						// Max ........................................
-					}
+        FileOutputStream fos = new FileOutputStream("def");
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        bytesRead = inData.read(byteArray, 0, byteArray.length);
+        current = bytesRead;
 
-					welcomeData.close();
-					dataSocket.close();
-					System.out.println(
-							"\nWhat would you like to do next: \n retr: file.txt || stor: file.txt  || quit: close");
+        do {
+            bytesRead = inData.read(byteArray, current,
+                    (byteArray.length - current));
+            if (bytesRead >= 0)
+                current += bytesRead;
+        } while (bytesRead > -1);
 
-				} else if (sentence.startsWith("retr: ")) {
-					// Max
-					// ....................................................
-				} else if (sentence.startsWith("stor: ")) {
-					// Rob
-					// ....................................................
-				} else if (sentence.startsWith("quit")) {
-					// Rob
-					// ....................................................
-				}
-			}
-		}
-	}
+        bos.write(byteArray, 0, current);
+        bos.flush();
+        bos.close();
+     
+     System.out.println("\nFile Retrieved");
+     welcomeData.close();
+	 dataSocket.close();
+	 System.out.println("\nWhat would you like to do next: \n retr: file.txt ||stor: file.txt  || close");
+
+    }
+
+
+        
+        }
+    }
 }
+}
+
+    
+
+
+		
