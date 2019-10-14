@@ -46,9 +46,12 @@ while( isOpen && clientGo){
                     Socket dataSocket = welcomeData.accept();
 
                     DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
-                    while (notEnd) {
+                    try {
                         modifiedSentence = inData.readUTF();
-                        System.out.println(modifiedSentence);
+                        System.out.print(modifiedSentence);
+                    }
+                    catch (EOFException e) {
+                    	System.out.println("End of stream reached");
                     }
 
                     welcomeData.close();
