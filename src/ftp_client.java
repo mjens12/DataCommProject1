@@ -64,6 +64,7 @@ while( isOpen && clientGo){
                     int current = 0;
                     int filesize = 10;
                     byte[] byteArray = new byte[10];
+                    port = port + 2;
 
                     outToServer.writeBytes(port + " " + sentence + " " + '\n');
                     ServerSocket welcomeData = new ServerSocket(port);
