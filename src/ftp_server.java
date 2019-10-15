@@ -74,7 +74,7 @@ class ClientHandler extends Thread {
 				firstln = tokens.nextToken();
 				port = Integer.parseInt(firstln);
 				clientCommand = tokens.nextToken();
-				//fileName = tokens.nextToken();
+				// fileName = tokens.nextToken();
 			}
 
 			if (fileName == null) {
@@ -134,6 +134,32 @@ class ClientHandler extends Thread {
 			}
 			if (clientCommand.equals("stor:")) {
 				// Sean
+				String fileName = tokens.nextToken();
+				Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
+				DataInputStream dataFromClient = new DataInputStream(dataSocket.getInputStream());
+
+				int filesize = 6022386;
+				int bytesRead;
+				int current = 0;
+				byte[] mybytearray = new byte[filesize];
+
+				FileOutputStream fos = new FileOutputStream(fileName);
+				BufferedOutputStream bos = new BufferedOutputStream(fos);
+				bytesRead = dataFromClient.read(mybytearray, 0, mybytearray.length);
+				current = bytesRead;
+
+				do {
+					bytesRead = dataFromClient.read(mybytearray, current, (mybytearray.length - current));
+					if (bytesRead >= 0)
+						current += bytesRead;
+				} while (bytesRead > -1);
+
+				bos.write(mybytearray, 0, current);
+				bos.flush();
+				bos.close();
+				dataSocket.close();
+				System.out.println("\nFile Retrieved");
+				System.out.println("Datasocket Closed");
 			}
 			if (clientCommand.equals("quit")) {
 				// Sean

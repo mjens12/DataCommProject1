@@ -101,34 +101,34 @@ public class ftp_client {
 			else if (command.equals("stor:")) {
 				// Rob
 				port = port + 2;
-				outToServer.writeBytes(port + " " + sentence + " " + '\n');
+				fileName = tokens.nextToken();
+				outToServer.writeBytes(port + " " + sentence + " " + fileName + '\n');
 
 				ServerSocket welcomeData = new ServerSocket(port);
 				Socket dataSocket = welcomeData.accept();
 
 				DataOutputStream outData = new DataOutputStream(new BufferedOutputStream(dataSocket.getOutputStream()));
 
-				// String fileName = tokens.nextToken();
-				File clientFilesDirectory = new File(".");
-				String filePath = clientFilesDirectory + "/" + fileName;
-				File file = new File(filePath);
-
-				if (file.exists()) {
-					byte[] bytes = new byte[(int) file.length()];
-					FileOutputStream outputStream = new FileOutputStream(file);
-					outputStream.write(bytes);
-					outputStream.close();
-
-					outData.write(bytes, 0, bytes.length);
+				String filePath = "./" + fileName;
+				File myFile = new File(filePath);
+				System.out.println(filePath);
+				if (myFile.exists()) {
+					byte[] mybytearray = new byte[(int) myFile.length() + 1];
+					FileInputStream fis = new FileInputStream(myFile);
+					BufferedInputStream bis = new BufferedInputStream(fis);
+					bis.read(mybytearray, 0, mybytearray.length);
+					System.out.println("Sending...");
+					outData.write(mybytearray, 0, mybytearray.length);
+					outData.flush();
+					bis.close();
+				} else {
+					System.out.println("File Not Found");
 				}
 
-				else {
-					System.out.println("File does not exist");
-				}
-
-				dataSocket.close();
 				welcomeData.close();
-				System.out.println("Data Socket closed");
+				dataSocket.close();
+				System.out.println(
+						"\nWhat would you like to do next: \nlist: || retr: file.txt || stor: file.txt || quit");
 
 			}
 
