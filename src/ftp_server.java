@@ -115,7 +115,7 @@ class ClientHandler extends Thread {
 				String fileName = tokens.nextToken();
 				String filePath = directory.getPath() + "/" + fileName;
 				File myFile = new File(filePath);
-				System.out.println(filePath);
+				//System.out.println(filePath);
 				if (myFile.exists()) {
 					byte[] mybytearray = new byte[(int) myFile.length() + 1];
 					FileInputStream fis = new FileInputStream(myFile);
