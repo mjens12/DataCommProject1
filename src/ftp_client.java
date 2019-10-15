@@ -109,7 +109,7 @@ public class ftp_client {
 
 				DataOutputStream outData = new DataOutputStream(new BufferedOutputStream(dataSocket.getOutputStream()));
 
-				String filePath = "./" + fileName;
+				String filePath = "/home/collirob/Documents/CIS457/Project1/" + fileName;
 				File myFile = new File(filePath);
 				System.out.println(filePath);
 				if (myFile.exists()) {
