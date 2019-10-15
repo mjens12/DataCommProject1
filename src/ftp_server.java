@@ -33,7 +33,7 @@ class ClientHandler extends Thread {
     int port = 1200;
 
     // path for Max
-    File directory = new File("/Users/isfar/Desktop/ftp/server");
+    File directory = new File("/home/greenese/457/Project1/DataCommProject1/src");
 
     List<String> listOfFiles = new ArrayList<>();
     String firstln;
@@ -65,121 +65,114 @@ class ClientHandler extends Thread {
     }
 
     public void run() {
-       while(true){
-        try {
+        while(connectionSocket.isClosed() == false){
+            try {
 
-            fromClient = inFromClient.readLine();
-            if (fromClient != null) {
-                tokens = new StringTokenizer(fromClient);
-                firstln = tokens.nextToken();
-                port = Integer.parseInt(firstln);
-                clientCommand = tokens.nextToken();
-                // fileName = tokens.nextToken();
-            }
+                fromClient = inFromClient.readLine();
+                if (fromClient != null) {
+                    tokens = new StringTokenizer(fromClient);
+                    firstln = tokens.nextToken();
+                    port = Integer.parseInt(firstln);
+                    clientCommand = tokens.nextToken();
+                    // fileName = tokens.nextToken();
+                }
 
-            if (fileName == null) {
-                fileName = "noFileFound.txt";
-            }
-            serverFiles(directory, listOfFiles);
+                if (fileName == null) {
+                    fileName = "noFileFound.txt";
+                }
+                serverFiles(directory, listOfFiles);
 
-            if (clientCommand.equals("list:")) {
-                // Max
-                Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
-                DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
+                if (clientCommand.equals("list:")) {
+                    // Max
+                    Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
+                    DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
 
-                if (listOfFiles.isEmpty()) {
-                    dataOutToClient.writeUTF("There are no files on the server");
-                    System.out.println("Telling the client there are no files on the server");
-                } else {
-                    String outputList = new String("");
-                    int x = 0;
-                    outputList.concat("The files on the server are:\n");
-                    while (x < listOfFiles.size()) {
-                        outputList = outputList.concat(listOfFiles.get(x) + "\n");
-                        x++;
+                    if (listOfFiles.isEmpty()) {
+                        dataOutToClient.writeUTF("There are no files on the server");
+                        System.out.println("Telling the client there are no files on the server");
+                    } else {
+                        String outputList = new String("");
+                        int x = 0;
+                        outputList.concat("The files on the server are:\n");
+                        while (x < listOfFiles.size()) {
+                            outputList = outputList.concat(listOfFiles.get(x) + "\n");
+                            x++;
+                        }
+                        System.out.println("Sending the client the files on the server");
+                        dataOutToClient.writeUTF(outputList);
+
                     }
-                    System.out.println("Sending the client the files on the server");
-                    dataOutToClient.writeUTF(outputList);
 
+                    dataSocket.close();
+
+                    System.out.println("Closing data connection");
                 }
 
-                dataSocket.close();
+                if (clientCommand.equals("retr:")) {
+                    Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
+                    DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
+                    // String fileName = "file.txt";
+                    String fileName = tokens.nextToken();
+                    String filePath = directory.getPath() + "/" + fileName;
+                    File myFile = new File(filePath);
+                    //System.out.println(filePath);
+                    if (myFile.exists()) {
+                        byte[] mybytearray = new byte[(int) myFile.length() + 1];
+                        FileInputStream fis = new FileInputStream(myFile);
+                        BufferedInputStream bis = new BufferedInputStream(fis);
+                        bis.read(mybytearray, 0, mybytearray.length);
+                        System.out.println("Sending...");
+                        dataOutToClient.write(mybytearray, 0, mybytearray.length);
+                        dataOutToClient.flush();
+                        bis.close();
+                    } else {
+                        System.out.println("File Not Found");
+                    }
 
-                System.out.println("Closing data connection");
-            }
+                    dataSocket.close();
+                    System.out.println("Data Socket closed");
+                }
+                if (clientCommand.equals("stor:")) {
+                    // Sean
+                    String fileName = tokens.nextToken();
+                    Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
+                    DataInputStream dataFromClient = new DataInputStream(dataSocket.getInputStream());
 
-            if (clientCommand.equals("retr:")) {
-                Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
-                DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
-                // String fileName = "file.txt";
-                String fileName = tokens.nextToken();
-                String filePath = directory.getPath() + "/" + fileName;
-                File myFile = new File(filePath);
-                //System.out.println(filePath);
-                if (myFile.exists()) {
-                    byte[] mybytearray = new byte[(int) myFile.length() + 1];
-                    FileInputStream fis = new FileInputStream(myFile);
-                    BufferedInputStream bis = new BufferedInputStream(fis);
-                    bis.read(mybytearray, 0, mybytearray.length);
-                    System.out.println("Sending...");
-                    dataOutToClient.write(mybytearray, 0, mybytearray.length);
-                    dataOutToClient.flush();
-                    bis.close();
-                } else {
-                    System.out.println("File Not Found");
+                    int filesize = 6022386;
+                    int bytesRead;
+                    int current = 0;
+                    byte[] mybytearray = new byte[filesize];
+
+                    FileOutputStream fos = new FileOutputStream(fileName);
+                    BufferedOutputStream bos = new BufferedOutputStream(fos);
+                    bytesRead = dataFromClient.read(mybytearray, 0, mybytearray.length);
+                    current = bytesRead;
+
+                    do {
+                        bytesRead = dataFromClient.read(mybytearray, current, (mybytearray.length - current));
+                        if (bytesRead >= 0)
+                            current += bytesRead;
+                    } while (bytesRead > -1);
+
+                    bos.write(mybytearray, 0, current);
+                    bos.flush();
+                    bos.close();
+                    dataSocket.close();
+                    System.out.println("\nFile Retrieved");
+                    System.out.println("Datasocket Closed");
+                }
+                if (clientCommand.equals("quit")) {
+                    System.out.println("Closing connection with a client");
+                    connectionSocket.close();
                 }
 
-                dataSocket.close();
-                System.out.println("Data Socket closed");
-            }
-            if (clientCommand.equals("stor:")) {
-                // Sean
-                String fileName = tokens.nextToken();
-                Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
-                DataInputStream dataFromClient = new DataInputStream(dataSocket.getInputStream());
-
-                int filesize = 6022386;
-                int bytesRead;
-                int current = 0;
-                byte[] mybytearray = new byte[filesize];
-
-                FileOutputStream fos = new FileOutputStream(fileName);
-                BufferedOutputStream bos = new BufferedOutputStream(fos);
-                bytesRead = dataFromClient.read(mybytearray, 0, mybytearray.length);
-                current = bytesRead;
-
-                do {
-                    bytesRead = dataFromClient.read(mybytearray, current, (mybytearray.length - current));
-                    if (bytesRead >= 0)
-                        current += bytesRead;
-                } while (bytesRead > -1);
-
-                bos.write(mybytearray, 0, current);
-                bos.flush();
-                bos.close();
-                dataSocket.close();
-                System.out.println("\nFile Retrieved");
-                System.out.println("Datasocket Closed");
-            }
-            if (clientCommand.equals("quit")) {
-                
-                //outToClient.close();
-                //nFromClient.close();
-                connectionSocket.close();
-
-                System.out.println("Closing connection");
-
             }
 
-        }
 
-
-        catch (IOException e) {
-            System.out.println("Error: Unable to disconnect");
-            System.out.println(e);
+            catch (IOException e) {
+                System.out.println("Error: Unable to disconnect");
+                System.out.println(e);
+            }
         }
     }
-    
-    }
-
 }
