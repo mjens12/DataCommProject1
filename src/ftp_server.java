@@ -54,6 +54,9 @@ class ClientHandler extends Thread {
     }
 
     public static void serverFiles(File directory, List<String> listOfFiles) {
+        if(!(listOfFiles.isEmpty())){
+            listOfFiles.clear();
+        }
         if (directory.exists()) {
             for (File file : directory.listFiles()) {
                 if (file.isFile()) {
