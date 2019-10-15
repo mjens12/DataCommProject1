@@ -109,7 +109,7 @@ public class ftp_client {
 
                 DataOutputStream outData = new DataOutputStream(new BufferedOutputStream(dataSocket.getOutputStream()));
 
-                String filePath = "/Users/isfar/Desktop/ftp/client/" + fileName;
+                String filePath = "/home/greenese/457/Project1/" + fileName;
                 File myFile = new File(filePath);
                 //System.out.println(filePath);
                 if (myFile.exists()) {
@@ -134,8 +134,9 @@ public class ftp_client {
 
             else if (command.equals("quit")) {
                 // Rob
-                isOpen = false;
-
+                //isOpen = false;
+                port = port + 2;
+                outToServer.writeBytes(port + " " + sentence + " " + "\n");
                 System.out.println("\nServer Disconnected\n");
                 System.exit(0);
              
