@@ -17,6 +17,9 @@ public class ftp_client {
 		boolean clientGo = true;
 		int port = 1200;
 		int port1 = port + 2;
+		String command = "";
+		String fileName = "";
+		StringTokenizer tokens = new StringTokenizer("");
 
 		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 		Socket controlSocket = new Socket("127.0.0.1", port);
@@ -29,9 +32,13 @@ public class ftp_client {
 			DataOutputStream outToServer = new DataOutputStream(controlSocket.getOutputStream());
 			DataInputStream inFromServer = new DataInputStream(new BufferedInputStream(controlSocket.getInputStream()));
 			sentence = inFromUser.readLine();
-			StringTokenizer tokens = new StringTokenizer(sentence);
+			System.out.println(sentence);
+			if (sentence != null) {
+				tokens = new StringTokenizer(sentence);
+				command = tokens.nextToken();
+			}
 
-			if (sentence.equals("list:")) {
+			if (command.equals("list:")) {
 				// Max
 
 				port = port + 2;
@@ -52,9 +59,9 @@ public class ftp_client {
 				dataSocket.close();
 				System.out.println(
 						"\nWhat would you like to do next: \nlist: || retr: file.txt ||stor: file.txt || quit");
-			} else if (sentence.equals("retr:")) {
+			} else if (command.equals("retr:")) {
 				port = port + 2;
-				String fileName = tokens.nextToken();
+				fileName = tokens.nextToken();
 				outToServer.writeBytes(port + " " + sentence + " " + fileName + '\n');
 
 				ServerSocket welcomeData = new ServerSocket(port);
@@ -67,7 +74,7 @@ public class ftp_client {
 				int current = 0;
 				byte[] mybytearray = new byte[filesize];
 
-				FileOutputStream fos = new FileOutputStream("def");
+				FileOutputStream fos = new FileOutputStream(fileName);
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
 				bytesRead = inData.read(mybytearray, 0, mybytearray.length);
 				current = bytesRead;
@@ -91,7 +98,7 @@ public class ftp_client {
 
 			}
 
-			else if (sentence.startsWith("stor: ")) {
+			else if (command.equals("stor:")) {
 				// Rob
 				port = port + 2;
 				outToServer.writeBytes(port + " " + sentence + " " + '\n');
@@ -101,7 +108,7 @@ public class ftp_client {
 
 				DataOutputStream outData = new DataOutputStream(new BufferedOutputStream(dataSocket.getOutputStream()));
 
-				String fileName = tokens.nextToken();
+				// String fileName = tokens.nextToken();
 				File clientFilesDirectory = new File(".");
 				String filePath = clientFilesDirectory + "/" + fileName;
 				File file = new File(filePath);
@@ -125,12 +132,14 @@ public class ftp_client {
 
 			}
 
-			else if (sentence.startsWith("quit")) {
+			else if (command.equals("quit")) {
 				// Rob
 				port = port + 2;
 				outToServer.writeBytes(port + " " + sentence + " " + "\n");
 				System.out.println("\nGoodbye");
 				System.exit(0);
+			} else {
+				System.out.println("Invalid Command");
 			}
 
 		}
