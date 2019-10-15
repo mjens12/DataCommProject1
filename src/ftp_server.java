@@ -162,7 +162,8 @@ class ClientHandler extends Thread {
 				System.out.println("Datasocket Closed");
 			}
 			if (clientCommand.equals("quit")) {
-				// Sean
+				System.out.println("A client has left");
+				connectionSocket.close();
 			}
 
 		}
