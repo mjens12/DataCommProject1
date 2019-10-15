@@ -32,7 +32,7 @@ public class ftp_client {
 			DataOutputStream outToServer = new DataOutputStream(controlSocket.getOutputStream());
 			DataInputStream inFromServer = new DataInputStream(new BufferedInputStream(controlSocket.getInputStream()));
 			sentence = inFromUser.readLine();
-			//System.out.println(sentence);
+			// System.out.println(sentence);
 			if (sentence != null) {
 				tokens = new StringTokenizer(sentence);
 				command = tokens.nextToken();
@@ -111,7 +111,7 @@ public class ftp_client {
 
 				String filePath = "/home/collirob/Documents/CIS457/Project1/" + fileName;
 				File myFile = new File(filePath);
-				//System.out.println(filePath);
+				// System.out.println(filePath);
 				if (myFile.exists()) {
 					byte[] mybytearray = new byte[(int) myFile.length() + 1];
 					FileInputStream fis = new FileInputStream(myFile);
